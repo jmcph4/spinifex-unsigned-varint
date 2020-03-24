@@ -88,3 +88,80 @@ impl UVarInt {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_to_bytes_spec1() -> Result<(), EncodeError> {
+        let number: u128 = 1;
+        let actual_uvarint: UVarInt = UVarInt::new(number);
+        
+        let actual_bytes: Vec<u8> = actual_uvarint.to_bytes()?;
+        let expected_bytes: Vec<u8> = vec![1];
+
+        assert_eq!(actual_bytes, expected_bytes);
+        Ok(())
+    }
+
+    #[test]
+    fn test_to_bytes_spec2() -> Result<(), EncodeError> {
+        let number: u128 = 127;
+        let actual_uvarint: UVarInt = UVarInt::new(number);
+        
+        let actual_bytes: Vec<u8> = actual_uvarint.to_bytes()?;
+        let expected_bytes: Vec<u8> = vec![127];
+
+        assert_eq!(actual_bytes, expected_bytes);
+        Ok(())
+    }
+
+    #[test]
+    fn test_to_bytes_spec3() -> Result<(), EncodeError> {
+        let number: u128 = 128;
+        let actual_uvarint: UVarInt = UVarInt::new(number);
+        
+        let actual_bytes: Vec<u8> = actual_uvarint.to_bytes()?;
+        let expected_bytes: Vec<u8> = vec![128, 1];
+
+        assert_eq!(actual_bytes, expected_bytes);
+        Ok(())
+    }
+
+    #[test]
+    fn test_to_bytes_spec4() -> Result<(), EncodeError> {
+        let number: u128 = 255;
+        let actual_uvarint: UVarInt = UVarInt::new(number);
+        
+        let actual_bytes: Vec<u8> = actual_uvarint.to_bytes()?;
+        let expected_bytes: Vec<u8> = vec![255, 1];
+
+        assert_eq!(actual_bytes, expected_bytes);
+        Ok(())
+    }
+
+    #[test]
+    fn test_to_bytes_spec5() -> Result<(), EncodeError> {
+        let number: u128 = 300;
+        let actual_uvarint: UVarInt = UVarInt::new(number);
+        
+        let actual_bytes: Vec<u8> = actual_uvarint.to_bytes()?;
+        let expected_bytes: Vec<u8> = vec![172, 2];
+
+        assert_eq!(actual_bytes, expected_bytes);
+        Ok(())
+    }
+
+    #[test]
+    fn test_to_bytes_spec6() -> Result<(), EncodeError> {
+        let number: u128 = 16384;
+        let actual_uvarint: UVarInt = UVarInt::new(number);
+        
+        let actual_bytes: Vec<u8> = actual_uvarint.to_bytes()?;
+        let expected_bytes: Vec<u8> = vec![128, 128, 1];
+
+        assert_eq!(actual_bytes, expected_bytes);
+        Ok(())
+    }
+}
+
