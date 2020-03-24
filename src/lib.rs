@@ -1,3 +1,5 @@
+pub mod uvarint;
+
 #[cfg(test)]
 mod tests {
     #[test]
