@@ -8,6 +8,11 @@ pub enum EncodeError {
     OutOfRange
 }
 
+#[derive(Debug)]
+pub enum DecodeError {
+    OutOfRange
+}
+
 pub struct UVarInt {
     num: u128
 }
@@ -51,6 +56,30 @@ impl UVarInt {
         }
 
         Ok(bytes)
+    }
+
+    pub fn from_bytes(bytes: Vec<u8>) -> Result<Self, DecodeError> {
+        if bytes.len() > MAX_UVARINT_NUM_BYTES { /* bounds check */
+            return Err(DecodeError::OutOfRange);
+        }
+
+        let mut num: u128 = 0;
+
+        let mut n: u128 = 0;
+        let mut k: u128 = 0;
+
+        for i in 0..bytes.len() {
+            k = (bytes[i] & 0x7f) as u128;
+            n |= k << (i * 7);
+
+            if (bytes[i] & 0x80) == 0 {
+                num = n;
+                break;
+            }
+        }
+
+        let varint: UVarInt = UVarInt::new(num);
+        Ok(varint)
     }
 
     fn u128_log2(n: u128) -> usize {
