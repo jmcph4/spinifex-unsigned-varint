@@ -13,6 +13,7 @@ pub enum DecodeError {
     OutOfRange
 }
 
+#[derive(Debug, PartialEq, Eq, PartialOrd)]
 pub struct UVarInt {
     num: u128
 }
@@ -161,6 +162,78 @@ mod tests {
         let expected_bytes: Vec<u8> = vec![128, 128, 1];
 
         assert_eq!(actual_bytes, expected_bytes);
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_bytes_spec1() -> Result<(), DecodeError> {
+        let number: u128 = 1;
+        let bytes: Vec<u8> = vec![1];
+
+        let actual_uvarint: UVarInt = UVarInt::from_bytes(bytes)?;
+        let expected_uvarint: UVarInt = UVarInt::new(number);
+
+        assert_eq!(actual_uvarint, expected_uvarint);
+        Ok(())
+    }
+    
+    #[test]
+    fn test_from_bytes_spec2() -> Result<(), DecodeError> {
+        let number: u128 = 127;
+        let bytes: Vec<u8> = vec![127];
+
+        let actual_uvarint: UVarInt = UVarInt::from_bytes(bytes)?;
+        let expected_uvarint: UVarInt = UVarInt::new(number);
+
+        assert_eq!(actual_uvarint, expected_uvarint);
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_bytes_spec3() -> Result<(), DecodeError> {
+        let number: u128 = 128;
+        let bytes: Vec<u8> = vec![128, 1];
+
+        let actual_uvarint: UVarInt = UVarInt::from_bytes(bytes)?;
+        let expected_uvarint: UVarInt = UVarInt::new(number);
+
+        assert_eq!(actual_uvarint, expected_uvarint);
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_bytes_spec4() -> Result<(), DecodeError> {
+        let number: u128 = 255;
+        let bytes: Vec<u8> = vec![255, 1];
+
+        let actual_uvarint: UVarInt = UVarInt::from_bytes(bytes)?;
+        let expected_uvarint: UVarInt = UVarInt::new(number);
+
+        assert_eq!(actual_uvarint, expected_uvarint);
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_bytes_spec5() -> Result<(), DecodeError> {
+        let number: u128 = 300;
+        let bytes: Vec<u8> = vec![172, 2];
+
+        let actual_uvarint: UVarInt = UVarInt::from_bytes(bytes)?;
+        let expected_uvarint: UVarInt = UVarInt::new(number);
+
+        assert_eq!(actual_uvarint, expected_uvarint);
+        Ok(())
+    }
+
+    #[test]
+    fn test_from_bytes_spec6() -> Result<(), DecodeError> {
+        let number: u128 = 16384;
+        let bytes: Vec<u8> = vec![128, 128, 1];
+
+        let actual_uvarint: UVarInt = UVarInt::from_bytes(bytes)?;
+        let expected_uvarint: UVarInt = UVarInt::new(number);
+
+        assert_eq!(actual_uvarint, expected_uvarint);
         Ok(())
     }
 }
