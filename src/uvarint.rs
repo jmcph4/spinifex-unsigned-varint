@@ -1,3 +1,4 @@
+use std::fmt;
 use std::convert::TryInto;
 
 pub const BITS_PER_BYTE: usize = 8;
@@ -86,6 +87,12 @@ impl UVarInt {
     fn u128_log2(n: u128) -> usize {
         (std::mem::size_of::<u128>() * BITS_PER_BYTE) -
             n.leading_zeros() as usize - 1
+    }
+}
+
+impl fmt::Display for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "uv{}", self.num)
     }
 }
 
