@@ -19,12 +19,34 @@ pub enum EncodeError {
     OutOfRange
 }
 
+impl fmt::Display for EncodeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            EncodeError::OutOfRange => 
+                write!(f, "Value overflows maximum output size")?
+        };
+
+        Ok(())
+    }
+}
+
 /// Represents a decoding failure.
 ///
 /// Returned whenever a function performs decoding of a `UVarInt` type.
 #[derive(Debug)]
 pub enum DecodeError {
     OutOfRange
+}
+
+impl fmt::Display for DecodeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            DecodeError::OutOfRange => 
+                write!(f, "Input size overflows native representation")?
+        };
+
+        Ok(())
+    }
 }
 
 /// Represents an unsigned variable integer type, compliant with the multiformat
