@@ -210,6 +210,12 @@ impl fmt::UpperHex for UVarInt {
     }
 }
 
+impl fmt::LowerHex for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::LowerHex::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
