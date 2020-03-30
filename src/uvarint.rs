@@ -1,31 +1,111 @@
 use std::fmt;
 use std::convert::TryInto;
 
+use thiserror::Error;
+
+/// Number of bits in a byte.
+///
+/// This type largely exists to avoid magic numbers littering the codebase.
 pub const BITS_PER_BYTE: usize = 8;
+
+/// Maximum number of bytes in a binary representation for a `UVarInt`.
+///
+/// See the multiformat specification for details.
 pub const MAX_UVARINT_NUM_BYTES: usize = 9;
 
-#[derive(Debug)]
+/// Represents an encoding failure.
+///
+/// Returned whenever a function performs encoding of a `UVarInt` type.
+#[derive(Error, Debug)]
 pub enum EncodeError {
     OutOfRange
 }
 
-#[derive(Debug)]
+impl fmt::Display for EncodeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            EncodeError::OutOfRange => 
+                write!(f, "Value overflows maximum output size")?
+        };
+
+        Ok(())
+    }
+}
+
+/// Represents a decoding failure.
+///
+/// Returned whenever a function performs decoding of a `UVarInt` type.
+#[derive(Error, Debug)]
 pub enum DecodeError {
     OutOfRange
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd)]
+impl fmt::Display for DecodeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            DecodeError::OutOfRange => 
+                write!(f, "Input size overflows native representation")?
+        };
+
+        Ok(())
+    }
+}
+
+/// Represents an unsigned variable integer type, compliant with the multiformat
+/// of the same name.
+///
+/// The struct simply contains the underlying native integer type representing
+/// the type.
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Default, Hash)]
 pub struct UVarInt {
     num: u128
 }
 
 impl UVarInt {
+    /// Constructs a new `UVarInt` from a native unsigned integer type.
+    ///
+    /// # Examples #
+    /// ```rust
+    /// use spinifex_unsigned_varint::uvarint::UVarInt;
+    ///
+    /// fn main() {
+    ///     let some_uvarint: UVarInt = UVarInt::new(128);
+    ///     println!("{}", some_uvarint);
+    /// }
+    ///
+    /// ```
     pub fn new(num: u128) -> Self {
         UVarInt {
             num: num
         }
     }
 
+    /// Encodes the `UVarInt` type into its binary representation (as a
+    /// `Vec<u8>`).
+    ///
+    /// # Examples #
+    /// ```rust
+    /// use spinifex_unsigned_varint::uvarint::{UVarInt, EncodeError};
+    ///
+    /// fn main() {
+    ///     let bytes: Vec<u8> = vec![128, 1];
+    ///     let some_uvarint: UVarInt = match UVarInt::from_bytes(bytes) {
+    ///         Ok(uv) => uv,
+    ///         Err(e) => {
+    ///             println!("{:?}", e);
+    ///             panic!();
+    ///         }
+    ///     };
+    /// 
+    ///     println!("Bytes decoded as {}", some_uvarint);
+    /// }
+    ///
+    /// ```
+    /// 
+    /// # Errors #
+    /// 
+    /// Returns `EncodeError::OutOfRange` if the stored value would overflow the
+    /// maximum number of bytes of an unsigned varint (`MAX_UVARINT_NUM_BYTES`).
     pub fn to_bytes(&self) -> Result<Vec<u8>, EncodeError> {
         let num_bytes: usize = (UVarInt::u128_log2(self.num) /
             (BITS_PER_BYTE - 1)) + 1;
@@ -60,6 +140,32 @@ impl UVarInt {
         Ok(bytes)
     }
 
+    /// Decodes a sequence of bytes (as a `Vec<u8>`) into a valid `UVarInt`.
+    ///
+    /// # Examples #
+    /// 
+    /// ```rust
+    /// use spinifex_unsigned_varint::uvarint::{UVarInt, EncodeError};
+    ///
+    /// fn main() {
+    ///     let some_uvarint: UVarInt = UVarInt::new(128);
+    ///     let bytes: Vec<u8> = match some_uvarint.to_bytes() {
+    ///         Ok(b) => b,
+    ///         Err(e) => {
+    ///             println!("{:?}", e);
+    ///             panic!();
+    ///         }
+    ///     };
+    /// 
+    ///     println!("UVarInt encoded to {:?}", bytes);
+    /// }
+    ///
+    /// ```
+    ///
+    /// # Errors #
+    /// 
+    /// Returns `DecodeError::OutOfRange` if the number of provided bytes
+    /// exceeds `MAX_UVARINT_NUM_BYTES`.
     pub fn from_bytes(bytes: Vec<u8>) -> Result<Self, DecodeError> {
         if bytes.len() > MAX_UVARINT_NUM_BYTES { /* bounds check */
             return Err(DecodeError::OutOfRange);
@@ -84,6 +190,8 @@ impl UVarInt {
         Ok(varint)
     }
 
+    /// Calculates the (floor of the) base 2 logarithm of a native 128-bit
+    /// unsigned integer.
     fn u128_log2(n: u128) -> usize {
         (std::mem::size_of::<u128>() * BITS_PER_BYTE) -
             n.leading_zeros() as usize - 1
@@ -93,6 +201,30 @@ impl UVarInt {
 impl fmt::Display for UVarInt {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "uv{}", self.num)
+    }
+}
+
+impl fmt::UpperHex for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::UpperHex::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
+impl fmt::LowerHex for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::LowerHex::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
+impl fmt::Octal for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Octal::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
+impl fmt::Binary for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Binary::fmt(&self.num, f) /* delegate to u128's implementation */
     }
 }
 
