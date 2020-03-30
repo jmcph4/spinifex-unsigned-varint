@@ -204,6 +204,12 @@ impl fmt::Display for UVarInt {
     }
 }
 
+impl fmt::UpperHex for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::UpperHex::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
