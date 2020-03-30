@@ -4,6 +4,14 @@ version = "0.1.0"
 authors = ["jmcph4 <jmcph4.github@gmail.com>"]
 edition = "2018"
 
+description = "Rust implementation of the unsigned variable integer format used in the Multiformat specifications."
+repository = "https://github.com/jmcph4/spinifex-unsigned-varint"
+license = "MIT"
+keywords = ["spinifex", "multiformat", "multiformat-unsigned-varint", "variable-integer", "ipfs"]
+categories = ["encoding", "algorithms", "data-structures", "value-formatting", "api-bindings"]
+readme = "README.md"
+
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
