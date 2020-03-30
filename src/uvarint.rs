@@ -1,6 +1,8 @@
 use std::fmt;
 use std::convert::TryInto;
 
+use thiserror::Error;
+
 /// Number of bits in a byte.
 ///
 /// This type largely exists to avoid magic numbers littering the codebase.
@@ -14,7 +16,7 @@ pub const MAX_UVARINT_NUM_BYTES: usize = 9;
 /// Represents an encoding failure.
 ///
 /// Returned whenever a function performs encoding of a `UVarInt` type.
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum EncodeError {
     OutOfRange
 }
@@ -33,7 +35,7 @@ impl fmt::Display for EncodeError {
 /// Represents a decoding failure.
 ///
 /// Returned whenever a function performs decoding of a `UVarInt` type.
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum DecodeError {
     OutOfRange
 }
