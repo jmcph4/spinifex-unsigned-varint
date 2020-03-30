@@ -216,6 +216,12 @@ impl fmt::LowerHex for UVarInt {
     }
 }
 
+impl fmt::Octal for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Octal::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
