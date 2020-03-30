@@ -204,6 +204,30 @@ impl fmt::Display for UVarInt {
     }
 }
 
+impl fmt::UpperHex for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::UpperHex::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
+impl fmt::LowerHex for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::LowerHex::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
+impl fmt::Octal for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Octal::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
+impl fmt::Binary for UVarInt {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Binary::fmt(&self.num, f) /* delegate to u128's implementation */
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
