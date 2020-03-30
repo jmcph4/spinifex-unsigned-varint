@@ -54,7 +54,7 @@ impl fmt::Display for DecodeError {
 ///
 /// The struct simply contains the underlying native integer type representing
 /// the type.
-#[derive(Debug, PartialEq, Eq, PartialOrd)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Default, Hash)]
 pub struct UVarInt {
     num: u128
 }
