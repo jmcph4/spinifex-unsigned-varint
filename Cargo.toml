@@ -7,7 +7,7 @@ edition = "2018"
 description = "Rust implementation of the unsigned variable integer format used in the Multiformat specifications."
 repository = "https://github.com/jmcph4/spinifex-unsigned-varint"
 license = "MIT"
-keywords = ["spinifex", "multiformat", "multiformat-unsigned-varint", "variable-integer", "ipfs"]
+keywords = ["spinifex", "multiformat", "ipfs"]
 categories = ["encoding", "algorithms", "data-structures", "value-formatting", "api-bindings"]
 readme = "README.md"
 
