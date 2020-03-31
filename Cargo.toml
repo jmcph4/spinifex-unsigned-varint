@@ -16,4 +16,5 @@ readme = "README.md"
 
 [dependencies]
 thiserror = "1.0.14"
+version-sync = "0.9"
 
