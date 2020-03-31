@@ -1,4 +1,4 @@
-#![doc(html_root_url = "https://docs.rs/spinifex-unsigned-varint/0.2.1")]
+#![doc(html_root_url = "https://docs.rs/spinifex-unsigned-varint/0.2.2")]
 pub mod uvarint;
 
 #[cfg(test)]
