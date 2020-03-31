@@ -174,7 +174,7 @@ impl UVarInt {
         let mut num: u128 = 0;
 
         let mut n: u128 = 0;
-        let mut k: u128 = 0;
+        let mut k: u128;
 
         for i in 0..bytes.len() {
             k = (bytes[i] & 0x7f) as u128;
